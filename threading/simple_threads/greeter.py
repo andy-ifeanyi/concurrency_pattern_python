@@ -1,27 +1,32 @@
 import time
 import threading
 
+
 def greeter(name: str, freq: int = 10):
-    for n in range(1, freq+1):
+    for n in range(1, freq + 1):
         print(f"{n}. Hello {name}!")
         time.sleep(1)
 
 
 def main():
     # set the target
-    t1 = threading.Thread(target=greeter, args=("Adam", 7), daemon=True)
+    threads = [
+        threading.Thread(target=greeter, args=("Adam", 7), daemon=True),
+        threading.Thread(target=greeter, args=("Eve", 5), daemon=True),
+        threading.Thread(target=greeter, args=("Abel", 3), daemon=True),
+        threading.Thread(target=greeter, args=("Kane", 3), daemon=True),
+    ]
 
-    t2 = threading.Thread(target=greeter, args=("Eve", 5), daemon=True)
 
-    t1.start()
-    t2.start()
+    print("starting threads")
 
-    print("printing greetings with python threads")
-    print(321 * 123)
+    # start the the threads
+    [t.start() for t in threads]
 
-    t1.join()
-    t2.join()
+    # join / wait on the threads / wait for the completion of the threads
+    [t.join() for t in threads]
     print("Done")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
