@@ -15,7 +15,10 @@ def generate_data(num: int, data: list):
 def process_data(num, data):
     processed = 0
     while processed < num:
-        item = data.pop(0)
+        item = None
+
+        if data:
+            item = data.pop(0)
         if not item:
             time.sleep(0.01)
             continue
@@ -32,6 +35,9 @@ def process_data(num, data):
         )
         time.sleep(0.2)
 
+def check_for_cancellation():
+    print(colorama.Fore.RED + "Press enter to cancel...", flush=True)
+    input()
 
 def main():
     t0 = datetime.datetime.now()
@@ -44,10 +50,23 @@ def main():
         threading.Thread(target=process_data, args=(40, data), daemon=True),
     ]
 
+    abort_thread = threading.Thread(target=check_for_cancellation, daemon=True)
+    abort_thread.start()
+
     print("starting threads")
 
     # start the the threads
     [t.start() for t in threads]
+
+    while any(t.is_alive() for t in threads):
+        [
+            t.join(.001) for t in threads
+        ]
+        if not abort_thread.is_alive():
+            print("cancelling on your request!", flush=True)
+            break
+
+
 
     # join / wait on the threads / wait for the completion of the threads
     [t.join() for t in threads]
