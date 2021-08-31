@@ -34,7 +34,10 @@ def main():
     pool.apply_async(func=sqrt_even_numbers, args=(300000,))
     pool.apply_async(func=sqrt_even_numbers, args=(400000,))
 
+    # close the pool
     pool.close()
+
+    # wait for the tasks to complete
     pool.join()
 
     dt = datetime.datetime.now() - t0
